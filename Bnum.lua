@@ -45,7 +45,8 @@ export type Bnum = {
 	mod: (val1: any, val2: any) -> BN,
 	modf: (val: any) -> (BN, BN),
 	fmod: (val1: any, val2: any) -> BN,
-	pow2: (val: any) -> BN
+	pow2: (val: any) -> BN,
+	Percent: (val: any) -> string
 }
 local Bn = {}
 local inf = math.huge
@@ -665,6 +666,15 @@ function Bn.pow2(val: any): BN
 		nExp = nExp
 	end
 	return {man = man, exp = nExp}
+end
+
+function Bn.Percent(val: any): string
+	local fir = Bn.new(1, 0)
+	local hun = Bn.new(1, 2)
+	if Bn.meeq(val, hun) then return '100%' end
+	local recip = Bn.recip(val)
+	local round = Bn.round(recip)
+	return '1/' .. Bn.short(round) .. '%'
 end
 
 return Bn:: Bnum

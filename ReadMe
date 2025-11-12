@@ -1,46 +1,47 @@
 --[[
-BN Module Functions Cheat Sheet
-
-new(man, exp)           -- Creates a BN from mantissa and exponent
-fromNumber(number)      -- Converts a Lua number to BN
-fromString(string)      -- Converts a string to BN
-toNumber(bn)            -- Converts BN to a Lua number
-toStr(bn)               -- Converts BN to a readable string
-
-convert(val)            -- Converts any type (number, string, table) to BN
-
-add(val1, val2)         -- Adds two BNs
-sub(val1, val2)         -- Subtracts val2 from val1
-mul(val1, val2)         -- Multiplies two BNs
-div(val1, val2)         -- Divides val1 by val2
-pow(val1, val2)         -- Raises val1 to the power of val2
-neg(val)                -- Negates a BN
-recip(val)              -- Reciprocal of a BN
-
-logn(val)               -- Base e logarithm of val
-log(val1, val2)         -- Logarithm of val1 with base val2
-log10(val)              -- Base 10 logarithm of val
+new(man, exp)           -- creates a BN from mantissa and exponent
+fromNumber(val)         -- converts a Lua number to BN
+toNumber(val)           -- converts BN to a Lua number
+fromString(str)         -- converts string to BN
+toString(val)           -- converts BN to string
+convert(val)            -- converts any type to BN
+add(val1, val2)         -- adds two BNs
+sub(val1, val2)         -- subtracts val2 from val1
+mul(val1, val2)         -- multiplies two BNs
+div(val1, val2)         -- divides val1 by val2
+pow(val1, val2)         -- raises val1 to the power of val2
+neg(val)                -- negates a BN
+recip(val)              -- reciprocal of a BN
+sqrt(val)               -- square root of val
+cbrt(val)               -- cube root of val
+root(val1, val2)        -- nth root of val1 using val2
 pow10(val)              -- 10^val
-
-cmp(a, b)               -- Compares two BNs (-1, 0, 1)
-eq(val1, val2)          -- Checks if val1 == val2
-le(val1, val2)          -- Checks if val1 < val2
-leeq(val1, val2)        -- Checks if val1 <= val2
-me(val1, val2)          -- Checks if val1 > val2
-meeq(val1, val2)        -- Checks if val1 >= val2
-
-showDigits(val, digits) -- Rounds a number to specified decimal places
-short(val, digits, canComma) -- Returns a shortened display string
-AddComma(val)            -- Returns a string with commas for thousands
-
-lbencode(val)            -- Encodes BN for storage
-lbdecode(val)            -- Decodes BN from storage
-encodeData(val, oldData) -- Encodes BN with optional old data comparison
-
-clamp(val, min, max)    -- Clamps a value between min and max
-min(...)                 -- Returns the minimum BN from a list
-max(...)                 -- Returns the maximum BN from a list
-
-Constants:
-Zero, Inf, NegInf, NaN  -- Special BN constants
+pow2(val)               -- 2^val
+log(val1, val2)         -- logarithm of val1 with base val2
+logn(val)               -- natural log of val
+log10(val)              -- base-10 log of val
+compare(val1, val2)     -- compares two BNs (-1,0,1)
+le(val1, val2)          -- val1 < val2
+leeq(val1, val2)        -- val1 <= val2
+me(val1, val2)          -- val1 > val2
+meeq(val1, val2)        -- val1 >= val2
+eq(val1, val2)          -- val1 == val2
+between(val,low,up,inc) -- checks if val is between low and up (inclusive optional)
+suffixPart(index)       -- gets suffix string for large numbers
+short(val)              -- short display format
+toScienctific(val)      -- scientific notation string
+toHyperE(val)           -- hyper exponential string
+shortE(val)             -- short exponential string
+format(val)             -- automatic format (short, E, or HyperE)
+min(...)                -- returns min BN
+max(...)                -- returns max BN
+clamp(val,min,max)      -- clamps val between min and max
+floor(val)              -- floor BN
+ceil(val)               -- ceil BN
+round(val)              -- round BN
+exp(val)                -- e^val
+mod(val1,val2)          -- val1 modulo val2
+modf(val)               -- integer and fractional part of val
+fmod(val1,val2)         -- floor-modulo
+Percent(val)            -- converts BN to percent string
 ]]
