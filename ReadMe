@@ -1,0 +1,46 @@
+--[[
+BN Module Functions Cheat Sheet
+
+new(man, exp)           -- Creates a BN from mantissa and exponent
+fromNumber(number)      -- Converts a Lua number to BN
+fromString(string)      -- Converts a string to BN
+toNumber(bn)            -- Converts BN to a Lua number
+toStr(bn)               -- Converts BN to a readable string
+
+convert(val)            -- Converts any type (number, string, table) to BN
+
+add(val1, val2)         -- Adds two BNs
+sub(val1, val2)         -- Subtracts val2 from val1
+mul(val1, val2)         -- Multiplies two BNs
+div(val1, val2)         -- Divides val1 by val2
+pow(val1, val2)         -- Raises val1 to the power of val2
+neg(val)                -- Negates a BN
+recip(val)              -- Reciprocal of a BN
+
+logn(val)               -- Base e logarithm of val
+log(val1, val2)         -- Logarithm of val1 with base val2
+log10(val)              -- Base 10 logarithm of val
+pow10(val)              -- 10^val
+
+cmp(a, b)               -- Compares two BNs (-1, 0, 1)
+eq(val1, val2)          -- Checks if val1 == val2
+le(val1, val2)          -- Checks if val1 < val2
+leeq(val1, val2)        -- Checks if val1 <= val2
+me(val1, val2)          -- Checks if val1 > val2
+meeq(val1, val2)        -- Checks if val1 >= val2
+
+showDigits(val, digits) -- Rounds a number to specified decimal places
+short(val, digits, canComma) -- Returns a shortened display string
+AddComma(val)            -- Returns a string with commas for thousands
+
+lbencode(val)            -- Encodes BN for storage
+lbdecode(val)            -- Decodes BN from storage
+encodeData(val, oldData) -- Encodes BN with optional old data comparison
+
+clamp(val, min, max)    -- Clamps a value between min and max
+min(...)                 -- Returns the minimum BN from a list
+max(...)                 -- Returns the maximum BN from a list
+
+Constants:
+Zero, Inf, NegInf, NaN  -- Special BN constants
+]]

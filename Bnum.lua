@@ -1,8 +1,51 @@
 --!strict
 export type BN = {man: number, exp: number}
-type Bnum = {
-	add: (val1: any, val2: any) -> BN
-	
+export type Bnum = {
+	new: (man: number, exp: number) -> BN,
+	isFinite: (val: BN) -> boolean,
+	fromNumber: (val: number) -> BN,
+	toNumber: (val: BN) -> number,
+	fromString: (str: string) -> BN,
+	toString: (val: BN) -> string,
+	convert: (val: any) -> BN,
+	add: (val1: any, val2: any) -> BN,
+	neg: (val: any) -> BN,
+	sub: (val1: any, val2: any) -> BN,
+	mul: (val1: any, val2: any) -> BN,
+	recip: (val: any) -> BN,
+	div: (val1: any, val2: any) -> BN,
+	pow: (val1: any, val2: any) -> BN,
+	sqrt: (val: any) -> BN,
+	cbrt: (val: any) -> BN,
+	root: (val1: any, val2: any) -> BN,
+	pow10: (val: any) -> BN,
+	log: (val1: any, val2: any) -> BN,
+	logn: (val: any) -> BN,
+	log10: (val: any) -> BN,
+	compare: (val1: any, val2: any) -> number,
+	le: (val1: any, val2: any) -> boolean,
+	leeq: (val1: any, val2: any) -> boolean,
+	me: (val1: any, val2: any) -> boolean,
+	meeq: (val1: any, val2: any) -> boolean,
+	eq: (val1: any, val2: any) -> boolean,
+	between: (val: any, lower: any, upper: any, inclusive: boolean?) -> boolean,
+	suffixPart: (index: number) -> string,
+	short: (val: any) -> string,
+	toScienctific: (val: any) -> string,
+	toHyperE: (val: any) -> string,
+	shortE: (val: any) -> string,
+	format: (val: any) -> string,
+	min: <T...>(T...) -> BN,
+	max: <T...>(T...) -> BN,
+	clamp: (val: any, min: any, max: any) -> BN,
+	floor: (val: any) -> BN,
+	ceil: (val: any) -> BN,
+	round: (val: any) -> BN,
+	exp: (val: any) -> BN,
+	mod: (val1: any, val2: any) -> BN,
+	modf: (val: any) -> (BN, BN),
+	fmod: (val1: any, val2: any) -> BN,
+	pow2: (val: any) -> BN
 }
 local Bn = {}
 local inf = math.huge
@@ -624,4 +667,4 @@ function Bn.pow2(val: any): BN
 	return {man = man, exp = nExp}
 end
 
-return Bn
+return Bn:: Bnum
