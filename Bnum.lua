@@ -47,18 +47,11 @@ export type Bnum = {
 	modf: (val: any) -> (BN, BN),
 	fmod: (val1: any, val2: any) -> BN,
 	pow2: (val: any) -> BN,
-<<<<<<< HEAD
 	Percent: (val1: any, val2: any) -> string,
 	alpha: (val: any, canMultiLetter: boolean?) -> string,
 	toHN: (val: any) -> HN,
 	timeConvert: (val: any) -> string,
 	HyperRootLog: (val: any) -> BN
-=======
-	Percent: (val: any) -> string,
-	alpha: (val: any, canMultiLetter: boolean?) -> string,
-	toHN: (val: any) -> HN,
-	timeConvert: (val: any) -> string
->>>>>>> 9d8564f4068fa287538270453ff0ea6627addaec
 }
 local Bn = {}
 local inf = math.huge
@@ -103,19 +96,21 @@ function Bn.toNumber(val: BN): number
 end
 
 function Bn.fromString(str: string): BN
+	if str:find('e') then
+		local base, expStr = str:match('^([+-]?%d*%.?%d+)[eE](.+)$')
+		if base and expStr then
+			local man = tonumber(base):: number
+			local expBn = Bn.fromString(expStr)
+			local exp = Bn.toNumber(expBn)
+			return Bn.new(man, exp)
+		end
+	end
 	local val = tonumber(str)
 	if val then
 		return Bn.fromNumber(val)
 	end
-	local base, expStr = str:match('^([+-]?%d*%.?%d+)[eE]([+-]?%d+)$')
-	if base and expStr then
-		local man = tonumber(base)
-		local exp = tonumber(expStr)
-		return Bn.new(man, exp)
-	end
 	return {man = 0, exp = nan}
 end
-
 
 function Bn.toString(val: BN): string
 	local man, exp = val.man, val.exp
@@ -746,51 +741,6 @@ function Bn.HyperRootLog(val: any): BN
 	local component = Bn.pow10(val_sqrt)
 	local result = Bn.add(val, component)
 	return Bn.log10(result)
-end
-
-function normalize(exp: number, layer: number): (number, number)
-	if exp <= 308 then
-		return exp, layer
-	end
-	return normalize(math.log10(exp), layer+1)
-end
-
-function Bn.toHN(val: any): HN
-	val = Bn.convert(val)
-	local layer
-	local man: number, exp: number = val.man, val.exp
-	if exp ~= exp then
-		return {man = 0, exp = 0, layer = -1}
-	end
-	if exp == math.huge then
-		return {man = 1, exp = math.huge, layer = math.huge}
-	end
-	if man == 0 then
-		return {man = 0, exp = 0, layer = 0}
-	end
-	exp, layer = normalize(exp, 0)
-	local shift = math.floor(math.log10(math.abs(man)))
-	man = man / 10^shift
-	exp = exp + shift
-	return {man=man, exp=exp, layer=layer}
-end
-
-function Bn.timeConvert(val: any): string
-	val = Bn.convert(val)
-	local seconds = Bn.toNumber(val)
-	if seconds <= 0 then return "0s" end
-	local days = math.floor(seconds / 86400)
-	local hours = math.floor((seconds % 86400) / 3600)
-	local minutes = math.floor((seconds % 3600) / 60)
-	local secs = math.floor(seconds % 60)
-
-	local parts = {}
-	if days > 0 then table.insert(parts, days .. "d") end
-	if hours > 0 then table.insert(parts, hours .. "h") end
-	if minutes > 0 then table.insert(parts, minutes .. "m") end
-	if secs > 0 or #parts == 0 then table.insert(parts, secs .. "s") end
-
-	return table.concat(parts, ":")
 end
 
 return Bn:: Bnum
