@@ -1,5 +1,6 @@
 --!strict
 export type BN = {man: number, exp: number}
+type HN = {man: number, exp: number, layer: number}
 export type Bnum = {
 	new: (man: number, exp: number) -> BN,
 	isFinite: (val: BN) -> boolean,
@@ -46,7 +47,11 @@ export type Bnum = {
 	modf: (val: any) -> (BN, BN),
 	fmod: (val1: any, val2: any) -> BN,
 	pow2: (val: any) -> BN,
-	Percent: (val: any) -> string
+	Percent: (val1: any, val2: any) -> string,
+	alpha: (val: any, canMultiLetter: boolean?) -> string,
+	toHN: (val: any) -> HN,
+	timeConvert: (val: any) -> string,
+	HyperRootLog: (val: any) -> BN
 }
 local Bn = {}
 local inf = math.huge
@@ -70,7 +75,7 @@ end
 function Bn.fromNumber(val: number): BN
 	if val == 0 then return zero end
 	if val == inf then return {man = 1, exp = inf} end
-	if val == neginf then return {man=1, exp = inf} end
+	if val == neginf then return {man=-1, exp = inf} end
 	if val ~= val then return {man=0, exp = nan} end
 	local absVal = math.abs(val)
 	local exp = math.floor(math.log10(absVal))
@@ -83,7 +88,7 @@ function Bn.toNumber(val: BN): number
 	if exp == inf then
 		return val.man >= 0 and inf or neginf
 	elseif exp ~= exp then
-		return nan
+		return 0
 	elseif man == 0 then
 		return 0
 	end
@@ -194,7 +199,9 @@ function Bn.neg(val: any): BN
 end
 
 function Bn.sub(val1: any, val2: any): BN
-	return Bn.add(val1, Bn.neg(val2))
+	local result = Bn.add(val1, Bn.neg(val2))
+	if Bn.leeq(result, 0) then return zero end
+	return result
 end
 
 function Bn.mul(val1: any, val2: any): BN
@@ -461,7 +468,7 @@ function Bn.short(val: any): string
 	end
 	if exp < 3 then
 		local num = Bn.toNumber(val)
-		return tostring(math.floor(num + 0.001))
+		return tostring(math.floor(num * 100 + 0.001) / 100)
 	end
 	local index = math.floor(exp/3)
 	if index < #first then
@@ -668,13 +675,72 @@ function Bn.pow2(val: any): BN
 	return {man = man, exp = nExp}
 end
 
-function Bn.Percent(val: any): string
-	local fir = Bn.new(1, 0)
-	local hun = Bn.new(1, 2)
-	if Bn.meeq(val, hun) then return '100%' end
-	local recip = Bn.recip(val)
-	local round = Bn.round(recip)
-	return '1/' .. Bn.short(round) .. '%'
+function Bn.Percent(val1: any, val2: any): string
+	val1, val2 = Bn.convert(val1), Bn.convert(val2)
+	if val2.man == 0 then return '100%' end
+	local ratio = Bn.div(val1, val2)
+	local percent = Bn.mul(ratio, 100)
+	if percent.man < 0 or percent.exp < 0 then
+		return '0%'
+	end
+	local hund = Bn.fromNumber(1e2)
+	if Bn.meeq(percent, hund) then return '100%' end
+	return Bn.format(percent) .. '%'
+end
+
+function normalize(exp: number, layer: number): (number, number)
+	if exp <= 308 then
+		return exp, layer
+	end
+	return normalize(math.log10(exp), layer+1)
+end
+
+function Bn.toHN(val: any): HN
+	val = Bn.convert(val)
+	local layer
+	local man: number, exp: number = val.man, val.exp
+	if exp ~= exp then
+		return {man = 0, exp = 0, layer = -1}
+	end
+	if exp == math.huge then
+		return {man = 1, exp = math.huge, layer = math.huge}
+	end
+	if man == 0 then
+		return {man = 0, exp = 0, layer = 0}
+	end
+	exp, layer = normalize(exp, 0)
+	local shift = math.floor(math.log10(math.abs(man)))
+	man = man / 10^shift
+	exp = exp + shift
+	return {man=man, exp=exp, layer=layer}
+end
+
+function Bn.timeConvert(val: any): string
+	val = Bn.convert(val)
+	local seconds = Bn.toNumber(val)
+	if seconds < 0 then return "0s" end
+	local days = math.floor(seconds / 86400)
+	local hours = math.floor((seconds % 86400) / 3600)
+	local minutes = math.floor((seconds % 3600) / 60)
+	local secs = math.floor(seconds % 60)
+	local parts = {}
+	if days > 0 then table.insert(parts, days .. "d") end
+	if hours > 0 then table.insert(parts, hours .. "h") end
+	if minutes > 0 then table.insert(parts, minutes .. "m") end
+	if secs > 0 or #parts == 0 then table.insert(parts, secs .. "s") end
+	return table.concat(parts, ":")
+end
+
+function Bn.HyperRootLog(val: any): BN
+	val = Bn.convert(val)
+	if val.man == 0 then return zero end
+	local ten = Bn.fromNumber(10)
+	local valPlus = Bn.add(val, ten)
+	local logPart = Bn.log10(valPlus)
+	local val_sqrt = Bn.sqrt(logPart)
+	local component = Bn.pow10(val_sqrt)
+	local result = Bn.add(val, component)
+	return Bn.log10(result)
 end
 
 return Bn:: Bnum
